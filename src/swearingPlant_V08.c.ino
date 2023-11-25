@@ -1,21 +1,23 @@
-#include <FastLED.h>
 #include <DFPlayerMini_Fast.h>
 #include <SoftwareSerial.h>
 
-
+//Pin Defintions
 SoftwareSerial mySerial(22, 23); // RX, TX
 #define PIR_PIN     13
 #define PHOTON_PIN 25
-#define Mosfet 2 
+#define Mosfet 2 //Switches GND for the 5V devices (DFPlayerMini and Soilmoisture Sensor)
+#define Moisture_Pin 34
 
 DFPlayerMini_Fast myMP3;
 
+//Debugging with SerialPrints
+#define DEBUG false
+#define Serial if(DEBUG)Serial
 
 void setup() {
-
   Serial.begin(115200);
   mySerial.begin(9600);
-  myMP3.begin(mySerial, true);
+  myMP3.begin(mySerial, true); //Soft Serial for communication with the DF Player Module
 
   delay(500); // 0.5 second delay for recovery
 
@@ -24,25 +26,20 @@ void setup() {
   pinMode(PIR_PIN, INPUT);  //Den PIR Sensor als Eingang deklarieren
   pinMode(PHOTON_PIN, INPUT);
   pinMode(Mosfet, OUTPUT);
-  digitalWrite(Mosfet,0);
+  digitalWrite(Mosfet,0); //Make sure MOSFET is off, Mosfet requires a pulldown to be in a defined state when in DeepSleep
 }
-
-
-uint8_t gHue = 0; // rotating "base color" used by many of the patterns
-  
+ 
 void loop()
 {    
-  digitalWrite(Mosfet,1);
-  delay(650);
-  int soil_moisture_value = analogRead(34);  //put Sensor insert into soil
+  int soil_moisture_value = analogRead(Moisture_Pin);  //put Sensor insert into soil
   int did_move = digitalRead(PIR_PIN); //Das Eingangssignal lesen
 
   Serial.print("soil: ");
   Serial.println(soil_moisture_value);
 
   if(did_move){
-
-    // turn 5V with MOSFET on
+    digitalWrite(Mosfet,1);     // turn 5V with MOSFET on
+    delay(650);                 //Wait a bit so the 5V is stable
 
     Serial.println("movement detected!");
     float ligth_value = analogRead(PHOTON_PIN);
@@ -75,9 +72,8 @@ void loop()
   }
 
   myMP3.sleep();
-  digitalWrite(Mosfet,LOW);
-  // shut down 5V with MOSFET here!
-
+  digitalWrite(Mosfet,0);  // shut down 5V with MOSFET here 
+ 
   if(did_move){
     esp_sleep_enable_timer_wakeup(14.4E+9); // 4 hours in microseconds
     Serial.println("4h deep sleep");
