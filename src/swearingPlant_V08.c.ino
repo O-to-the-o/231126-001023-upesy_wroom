@@ -26,21 +26,18 @@ void setup() {
   pinMode(PIR_PIN, INPUT);  //Den PIR Sensor als Eingang deklarieren
   pinMode(PHOTON_PIN, INPUT);
   pinMode(Mosfet, OUTPUT);
-  digitalWrite(Mosfet,0); //Make sure MOSFET is off, Mosfet requires a pulldown to be in a defined state when in DeepSleep
+  digitalWrite(Mosfet,1); //Make sure MOSFET is off, Mosfet requires a pulldown to be in a defined state when in DeepSleep
 }
  
 void loop()
 {    
-  int soil_moisture_value = analogRead(Moisture_Pin);  //put Sensor insert into soil
   int did_move = digitalRead(PIR_PIN); //Das Eingangssignal lesen
-
-  Serial.print("soil: ");
-  Serial.println(soil_moisture_value);
-
   if(did_move){
     digitalWrite(Mosfet,1);     // turn 5V with MOSFET on
-    delay(650);                 //Wait a bit so the 5V is stable
-
+    delay(650);     
+    int soil_moisture_value = analogRead(Moisture_Pin);  //put Sensor insert into soil
+    Serial.print("soil: ");
+    Serial.println(soil_moisture_value);
     Serial.println("movement detected!");
     float ligth_value = analogRead(PHOTON_PIN);
     Serial.print("light value: ");
@@ -69,7 +66,9 @@ void loop()
   }
 
   delay(100); //Wait for the File to start Playing
-  while(myMP3.isPlaying()==true){}  //Don't shutdown while Playing
+  while(myMP3.isPlaying()){
+    delay(1000); //To reduce Voltage Drops on the 5V rail and noise in the Speaker caused by high MCU Load
+  }  //Don't shutdown while Playing
 
   digitalWrite(Mosfet,0);  // shut down 5V with MOSFET here 
  
