@@ -11,7 +11,7 @@ SoftwareSerial mySerial(22, 23); // RX, TX
 DFPlayerMini_Fast myMP3;
 
 //Debugging with SerialPrints
-#define DEBUG false
+#define DEBUG true
 #define Serial if(DEBUG)Serial
 
 void setup() {
@@ -51,7 +51,6 @@ void loop()
         int mp3_num = random(1, 3);
         Serial.println("play mp3 plaese water!");
         myMP3.playFromMP3Folder(mp3_num);
-        delay(5000);
       }
       else if(ligth_value >= 3000 && ligth_value <= 3500){  // give me more light!
         int dice_roll = random(0, 100);
@@ -60,18 +59,18 @@ void loop()
         if(dice_roll > 80){
           int mp3_num = random(6, 7);
           myMP3.playFromMP3Folder(mp3_num);
-          delay(5000);
         }
       }
     else if(ligth_value <= 500){  // we have super light!
         int mp3_num = random(4, 5);
         myMP3.playFromMP3Folder(mp3_num);
-        delay(5000);
       }
     }
   }
 
-  myMP3.sleep();
+  delay(100); //Wait for the File to start Playing
+  while(myMP3.isPlaying()==true){}  //Don't shutdown while Playing
+
   digitalWrite(Mosfet,0);  // shut down 5V with MOSFET here 
  
   if(did_move){
