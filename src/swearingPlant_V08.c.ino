@@ -77,9 +77,9 @@ void loop()
     Serial.println("4h deep sleep");
   }
   else{
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_33,1); //1 = High, 0 = Low
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_13,1); //1 = High, 0 = Low
     Serial.println("deep sleep, wake up on movement");
-  }
+ }
 
 esp_deep_sleep_start();
 }
