@@ -81,7 +81,7 @@ void loop()
   digitalWrite(Mosfet,0);  // shut down 5V with MOSFET here 
  
   if(did_move){
-    esp_sleep_enable_timer_wakeup(14.4E+9); // 4 hours in microseconds
+    esp_sleep_enable_timer_wakeup(3600000); // 1 houre in microseconds
     Serial.println("4h deep sleep");
   }
   else{
