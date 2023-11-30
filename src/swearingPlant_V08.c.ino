@@ -9,12 +9,12 @@ SoftwareSerial mySerial(22, 23); // RX, TX
 #define Moisture_Pin 34
 
 //Sound Files
-#define waterStart 1
-#define waterEnd 3
-#define enoughlightStart 4
-#define enoughlightEnd 5
-#define moreLightStart 6
-#define moreLightEnd 7
+#define waterStart 101
+#define waterEnd 104
+#define enoughlightStart 301
+#define enoughlightEnd 304
+#define moreLightStart 201
+#define moreLightEnd 204
 
 DFPlayerMini_Fast myMP3;
 
