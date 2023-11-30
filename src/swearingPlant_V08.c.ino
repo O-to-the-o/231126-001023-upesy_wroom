@@ -8,6 +8,14 @@ SoftwareSerial mySerial(22, 23); // RX, TX
 #define Mosfet 2 //Switches GND for the 5V devices (DFPlayerMini and Soilmoisture Sensor)
 #define Moisture_Pin 34
 
+//Sound Files
+#define waterStart 1
+#define waterEnd 3
+#define enoughlightStart 4
+#define enoughlightEnd 5
+#define moreLightStart 6
+#define moreLightEnd 7
+
 DFPlayerMini_Fast myMP3;
 
 //Debugging with SerialPrints
@@ -45,7 +53,7 @@ void loop()
     
     if(ligth_value <= 3500){ // not enough ligth, do not disturb
       if(soil_moisture_value >= 3300){ // I need water!
-        int mp3_num = random(1, 3);
+        int mp3_num = random(waterStart, waterEnd);
         Serial.println("play mp3 plaese water!");
         myMP3.playFromMP3Folder(mp3_num);
       }
@@ -54,12 +62,12 @@ void loop()
         Serial.print("dice roll: ");
         Serial.println(dice_roll);
         if(dice_roll > 80){
-          int mp3_num = random(6, 7);
+          int mp3_num = random(moreLightStart, moreLightEnd);
           myMP3.playFromMP3Folder(mp3_num);
         }
       }
     else if(ligth_value <= 500){  // we have super light!
-        int mp3_num = random(4, 5);
+        int mp3_num = random(enoughlightStart, enoughlightEnd);
         myMP3.playFromMP3Folder(mp3_num);
       }
     }
