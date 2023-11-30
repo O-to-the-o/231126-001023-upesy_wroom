@@ -7,6 +7,7 @@ SoftwareSerial mySerial(22, 23); // RX, TX
 #define PHOTON_PIN 25
 #define Mosfet 2 //Switches GND for the 5V devices (DFPlayerMini and Soilmoisture Sensor)
 #define Moisture_Pin 34
+#define partyPin 5 
 
 //Sound Files
 #define waterStart 101
@@ -21,7 +22,7 @@ DFPlayerMini_Fast myMP3;
 //Debugging with SerialPrints
 #define DEBUG true
 #define Serial if(DEBUG)Serial
-
+int party = 0;
 void setup() {
   Serial.begin(115200);
   mySerial.begin(9600);
@@ -34,7 +35,9 @@ void setup() {
   pinMode(PIR_PIN, INPUT);  //Den PIR Sensor als Eingang deklarieren
   pinMode(PHOTON_PIN, INPUT);
   pinMode(Mosfet, OUTPUT);
+  pinMode(partyPin,INPUT_PULLDOWN);
   digitalWrite(Mosfet,1); //Make sure MOSFET is off, Mosfet requires a pulldown to be in a defined state when in DeepSleep
+  party=digitalRead(partyPin);
 }
  
 void loop()
@@ -81,8 +84,15 @@ void loop()
   digitalWrite(Mosfet,0);  // shut down 5V with MOSFET here 
  
   if(did_move){
-    esp_sleep_enable_timer_wakeup(3600000); // 1 houre in microseconds
-    Serial.println("4h deep sleep");
+    if(party==1){
+      esp_sleep_enable_timer_wakeup(900000000);
+      Serial.println("1/4h deep sleep");
+    }
+    else{
+      esp_sleep_enable_timer_wakeup(7200000000); // 2 houre in microseconds
+      Serial.println("2h deep sleep");
+    }
+
   }
   else{
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_13,1); //1 = High, 0 = Low
